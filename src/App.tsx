@@ -35,24 +35,24 @@ const userConfig: UserConfig = {
       },
     },
   },
-  languageClientConfig: {
-    options: {
-      $type: 'WebSocketUrl',
-      url: 'ws://localhost:3030/server',
-      startOptions: {
-        onCall: () => {
-          console.log('Connected to socket.');
-        },
-        reportStatus: true,
-      },
-      stopOptions: {
-        onCall: () => {
-          console.log('Disconnected from socket.');
-        },
-        reportStatus: true,
-      },
-    },
-  },
+  // languageClientConfig: {
+  //   options: {
+  //     $type: 'WebSocketUrl',
+  //     url: 'ws://localhost:3030/server',
+  //     startOptions: {
+  //       onCall: () => {
+  //         console.log('Connected to socket.');
+  //       },
+  //       reportStatus: true,
+  //     },
+  //     stopOptions: {
+  //       onCall: () => {
+  //         console.log('Disconnected from socket.');
+  //       },
+  //       reportStatus: true,
+  //     },
+  //   },
+  // },
 };
 
 const comp = (

@@ -8,11 +8,9 @@
     "npm": "^10.7.0",
     "prettier": "^3.2.5",
     "react": "^18.3.1",
-    "react-app-rewired": "^2.2.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
-    "util": "^0.12.5"
+    "typescript": "^4.9.5"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
@@ -21,9 +19,9 @@
     "@types/react-dom": "^18.3.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
