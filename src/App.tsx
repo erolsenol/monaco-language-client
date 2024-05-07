@@ -1,8 +1,7 @@
 import * as monaco from 'monaco-editor';
 import { UserConfig } from 'monaco-editor-wrapper';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
-import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
+import React from 'react';
 
 import { useWorkerFactory } from 'monaco-editor-wrapper/workerFactory';
 
@@ -55,10 +54,6 @@ const userConfig: UserConfig = {
   // },
 };
 
-const comp = (
-  <MonacoEditorReactComp userConfig={userConfig} style={{ height: '100%' }} />
-);
-
 function App() {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -76,13 +71,14 @@ function App() {
     },
   });
 
-  useEffect(() => {
-    ReactDOM.createRoot(containerRef.current!).render(comp);
-  }, []);
-
   return (
     <div className="App">
-      <div ref={containerRef} className="editor-container"></div>
+      <div ref={containerRef} className="editor-container">
+        <MonacoEditorReactComp
+          userConfig={userConfig}
+          style={{ height: '100%' }}
+        />
+      </div>
     </div>
   );
 }
