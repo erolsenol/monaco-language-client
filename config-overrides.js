@@ -1,7 +1,10 @@
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-
 module.exports = function override(config, env) {
-  config.plugins = [...config.plugins, new MonacoWebpackPlugin()];
+  config.resolve = {
+    ...config.resolve,
+    fallback: {
+      util: require.resolve('util/'),
+    },
+  };
 
   return config;
 };

@@ -1,92 +1,88 @@
-import React, { useState } from 'react';
-import { monaco } from 'react-monaco-editor';
-import MonacoEditor from 'react-monaco-editor';
+import * as monaco from 'monaco-editor';
+import { UserConfig } from 'monaco-editor-wrapper';
+import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
+import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
+
+import { useWorkerFactory } from 'monaco-editor-wrapper/workerFactory';
+
+// https://github.com/microsoft/vscode/tree/main/extensions/sql
+// import '@codingame/monaco-vscode-sql-default-extension';
+
+monaco.languages.register({
+  id: 'sql',
+  extensions: ['.sql'],
+  aliases: ['SQL', 'sql'],
+  mimetypes: ['application/sql'],
+});
+
+console.log(monaco.languages.getLanguages());
+
+const userConfig: UserConfig = {
+  wrapperConfig: {
+    editorAppConfig: {
+      $type: 'extended',
+      languageId: 'sql',
+      code: 'SELECT * FROM Album',
+      useDiffEditor: false,
+      codeUri: `query-1.sql`,
+      // codeUri: `inmemory://query-1.sql`,
+      userConfiguration: {
+        json: JSON.stringify({
+          'workbench.colorTheme': 'Default Dark Modern',
+          'editor.lightbulb.enabled': 'On',
+        }),
+      },
+    },
+  },
+  languageClientConfig: {
+    options: {
+      $type: 'WebSocketUrl',
+      url: 'ws://localhost:3030/server',
+      startOptions: {
+        onCall: () => {
+          console.log('Connected to socket.');
+        },
+        reportStatus: true,
+      },
+      stopOptions: {
+        onCall: () => {
+          console.log('Disconnected from socket.');
+        },
+        reportStatus: true,
+      },
+    },
+  },
+};
+
+const comp = (
+  <MonacoEditorReactComp userConfig={userConfig} style={{ height: '100%' }} />
+);
 
 function App() {
-  const [editorValue, setEditorValue] = useState('SELECT * FROM Album;');
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const editorWillMount = (monacoRef: typeof monaco) => {
-    monacoRef.languages.register({ id: 'sql' });
+  useWorkerFactory({
+    ignoreMapping: true,
+    workerLoaders: {
+      editorWorkerService: () =>
+        new Worker(
+          new URL(
+            'monaco-editor/esm/vs/editor/editor.worker.js',
+            import.meta.url
+          ),
+          { type: 'module' }
+        ),
+    },
+  });
 
-    monacoRef.languages.setMonarchTokensProvider('sql', {
-      tokenizer: {
-        root: [
-          [/\b(?:SELECT|FROM|WHERE)\b/, 'keyword'],
-          [/\b(?:\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?\b/, 'number'],
-          [/'([^'\\]|\\.)*$/, 'string.invalid'],
-          [/'/, 'string', '@string'],
-          [/"/, 'string', '@dblString'],
-        ],
-        string: [
-          [/[^']+/, 'string'],
-          [/''/, 'string'],
-          [/'/, 'string', '@pop'],
-        ],
-        dblString: [
-          [/[^"]+/, 'string'],
-          [/""/, 'string'],
-          [/"/, 'string', '@pop'],
-        ],
-      },
-    });
-
-    monacoRef.languages.setLanguageConfiguration('sql', {
-      brackets: [
-        ['{', '}'],
-        ['[', ']'],
-        ['(', ')'],
-      ],
-      autoClosingPairs: [
-        { open: '[', close: ']' },
-        { open: '(', close: ')' },
-        { open: '"', close: '"', notIn: ['string'] },
-        { open: "'", close: "'", notIn: ['string', 'dblString'] },
-      ],
-      surroundingPairs: [
-        { open: '{', close: '}' },
-        { open: '[', close: ']' },
-        { open: '(', close: ')' },
-        { open: '"', close: '"' },
-        { open: "'", close: "'" },
-      ],
-    });
-
-    monacoRef.languages.registerHoverProvider('sql', {
-      provideHover(
-        model: monaco.editor.ITextModel,
-        position: monaco.Position,
-        token: monaco.CancellationToken
-      ) {
-        return {
-          contents: [{ value: 'This is a hover' }],
-        };
-      },
-    });
-  };
-
-  const editorDidMount = (
-    editor: monaco.editor.IStandaloneCodeEditor,
-    monacoRef: typeof monaco
-  ) => {
-    console.log('editorDidMount', editor);
-    editor.focus();
-  };
+  useEffect(() => {
+    ReactDOM.createRoot(containerRef.current!).render(comp);
+  }, []);
 
   return (
     <div className="App">
-      <div className="editor">
-        <MonacoEditor
-          language="sql"
-          theme="vs-dark"
-          value={editorValue}
-          options={{
-            selectOnLineNumbers: true,
-          }}
-          onChange={(value) => setEditorValue(value)}
-          editorWillMount={editorWillMount}
-          editorDidMount={editorDidMount}
-        />
-      </div>
+      <div ref={containerRef} className="editor-container"></div>
     </div>
   );
 }
