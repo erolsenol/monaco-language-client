@@ -1,21 +1,18 @@
 # Monaco SQL editor experiment
 
-A React and TypeScript experiment using Monaco Editor and the TypeFox Monaco wrapper to render a SQL editor. The language client connection is commented out in the current source; this repository does not provide a running language server.
-
-> **Status:** Reference experiment, not a maintained editor product.
+A small React and TypeScript SQL scratchpad built with Monaco Editor and Vite. It demonstrates a local editing surface; it does not execute queries or connect to a language server.
 
 ## Run locally
 
+Requires Node.js 22.12 or newer.
+
 ```sh
 npm ci
-npm start
+npm run dev
 ```
 
-`npm run build` checks the production bundle. CI runs this build on Node.js 22. The project uses Create React App and older dependencies; its dependency audit reports known vulnerabilities. Review dependency and browser compatibility before reusing it.
+Run `npm run build` to typecheck and create the production bundle. `npm audit` checks the dependency tree.
 
-## Structure
-
-- `src/App.tsx` registers the SQL language and configures the editor wrapper.
-- `src/index.css` contains the editor layout.
+The previous Create React App and TypeFox wrapper were replaced because this experiment never enabled its language server connection. If you need an LSP integration, add a real server and a tested client contract rather than assuming this editor provides one.
 
 No license is granted in this repository.

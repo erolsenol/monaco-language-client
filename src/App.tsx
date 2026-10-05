@@ -1,86 +1,24 @@
-import * as monaco from 'monaco-editor';
-import { UserConfig } from 'monaco-editor-wrapper';
-import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
-import React from 'react';
+import Editor from '@monaco-editor/react';
 
-import { useWorkerFactory } from 'monaco-editor-wrapper/workerFactory';
+const initialQuery = 'SELECT * FROM Album;';
 
-// https://github.com/microsoft/vscode/tree/main/extensions/sql
-// import '@codingame/monaco-vscode-sql-default-extension';
-
-monaco.languages.register({
-  id: 'sql',
-  extensions: ['.sql'],
-  aliases: ['SQL', 'sql'],
-  mimetypes: ['application/sql'],
-});
-
-console.log(monaco.languages.getLanguages());
-
-const userConfig: UserConfig = {
-  wrapperConfig: {
-    editorAppConfig: {
-      $type: 'extended',
-      languageId: 'sql',
-      code: 'SELECT * FROM Album',
-      useDiffEditor: false,
-      codeUri: `query-1.sql`,
-      // codeUri: `inmemory://query-1.sql`,
-      userConfiguration: {
-        json: JSON.stringify({
-          'workbench.colorTheme': 'Default Dark Modern',
-          'editor.lightbulb.enabled': 'On',
-        }),
-      },
-    },
-  },
-  // languageClientConfig: {
-  //   options: {
-  //     $type: 'WebSocketUrl',
-  //     url: 'ws://localhost:3030/server',
-  //     startOptions: {
-  //       onCall: () => {
-  //         console.log('Connected to socket.');
-  //       },
-  //       reportStatus: true,
-  //     },
-  //     stopOptions: {
-  //       onCall: () => {
-  //         console.log('Disconnected from socket.');
-  //       },
-  //       reportStatus: true,
-  //     },
-  //   },
-  // },
-};
-
-function App() {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  useWorkerFactory({
-    ignoreMapping: true,
-    workerLoaders: {
-      editorWorkerService: () =>
-        new Worker(
-          new URL(
-            'monaco-editor/esm/vs/editor/editor.worker.js',
-            import.meta.url
-          ),
-          { type: 'module' }
-        ),
-    },
-  });
-
+export default function App() {
   return (
-    <div className="App">
-      <div ref={containerRef} className="editor-container">
-        <MonacoEditorReactComp
-          userConfig={userConfig}
-          style={{ height: '100%' }}
+    <main className="editor-page">
+      <header>
+        <p className="eyebrow">Monaco editor experiment</p>
+        <h1>SQL scratchpad</h1>
+        <p>Edit a query locally. This demo does not execute SQL or connect to a language server.</p>
+      </header>
+      <section className="editor-container" aria-label="SQL editor">
+        <Editor
+          height="70vh"
+          defaultLanguage="sql"
+          defaultValue={initialQuery}
+          theme="vs-dark"
+          options={{ minimap: { enabled: false }, automaticLayout: true }}
         />
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
-
-export default App;
